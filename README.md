@@ -10,12 +10,20 @@ Pipeline para procesar informes LABVIMA subidos a una carpeta de Google Drive, g
 4. Parsea cada informe y recompone `data/dataset.csv` y `data/reports.json`.
 5. Genera `dist/index.html` con métricas y gráficos básicos.
 
+## Ver el dashboard
+
+Una vez activado GitHub Pages en el repositorio, el HTML publicado quedará accesible en la URL de Pages del proyecto. El workflow ya genera `dist/index.html` y lo despliega automáticamente.
+
+Si querés probarlo en local, abrí `dist/index.html` después de correr el script de actualización.
+
 ## Configuración
 
 Variables y secretos requeridos:
 
 - `DRIVE_FOLDER_URL`: URL de la carpeta compartida de Google Drive.
 - `GOOGLE_CREDENTIALS_JSON`: contenido JSON de una cuenta de servicio con acceso a la carpeta.
+
+Además, en GitHub tenés que dejar Pages con source = GitHub Actions en la configuración del repo.
 
 ## Desarrollo local
 
