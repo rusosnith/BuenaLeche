@@ -1,0 +1,8 @@
+source_id,source_file,nro_informe,protocolo,fecha_ingreso,fecha_proceso,propietario,especie,muestras_recibidas,identificacion,rodeo,mg,proteina,lactosa,sng,st,prov,caseina,mun,crioscopia,rcs,rm,observaciones
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,EF,,4.95,3.96,4.62,14.9,497.0,179.0,,,,,,-
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,PL,,5.03,3.95,4.61,14.98,507.0,53.0,,,,,,-
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,T1,T1,3.96,3.97,4.83,14.09,330.0,69.0,,,,,,-
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,T2,T2,5.46,3.97,4.63,15.43,307.0,64.0,,,,,,-
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,T3,T3,5.34,4.31,4.67,15.67,336.0,59.0,,,,,,-
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,T4,T4,5.43,4.01,4.62,15.45,402.0,97.0,,,,,,-
+sample,Muestra leche.pdf,2855264,2855264,2026-06-24,2026-06-25,Divita Marina,BOVINO,7,MAS,,5.54,4.04,4.43,15.33,1132.0,264.0,,,,,,-

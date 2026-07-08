@@ -1,0 +1,118 @@
+═══════════════════════════════════════════════════════════════
+ LABVIMA → Google Sheets   |   Cabaña San Roque
+ Configuración paso a paso
+═══════════════════════════════════════════════════════════════
+
+
+PASO 1 — Instalar Python y librerías
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Descargar Python desde https://www.python.org/downloads/
+   ► IMPORTANTE: tildar "Add Python to PATH" al instalar
+
+2. Correr  1_INSTALAR.bat  (doble clic)
+
+
+PASO 2 — Crear el Google Sheet
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Ir a https://sheets.google.com
+2. Crear un nuevo spreadsheet
+3. Renombrar la primera hoja (pestaña) como:  Registro_Calidad
+4. Copiar la URL completa del spreadsheet desde el navegador
+   Ejemplo: https://docs.google.com/spreadsheets/d/1ABC.../edit
+
+
+PASO 3 — Crear credenciales de Google (cuenta de servicio)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Este paso es el más largo pero se hace una sola vez.
+
+  A) Ir a https://console.cloud.google.com
+     (iniciar sesión con tu cuenta de Google)
+
+  B) Crear un proyecto nuevo:
+     - Hacer clic en el selector de proyectos (arriba a la izquierda)
+     - "Nuevo proyecto" → nombre: "LabvimaSync" → Crear
+
+  C) Habilitar la API de Google Sheets:
+     - Menú izquierdo → "APIs y servicios" → "Biblioteca"
+     - Buscar "Google Sheets API" → clic → "Habilitar"
+     - Buscar "Google Drive API" → clic → "Habilitar"
+
+  D) Crear la cuenta de servicio:
+     - Menú izquierdo → "APIs y servicios" → "Credenciales"
+     - "+ Crear credenciales" → "Cuenta de servicio"
+     - Nombre: labvima-sync → Crear y continuar → Listo
+     - Aparece la cuenta en la lista. Hacer clic en el email
+       (algo como labvima-sync@labvimasync-XXX.iam.gserviceaccount.com)
+
+  E) Descargar la clave JSON:
+     - Pestaña "Claves" → "Agregar clave" → "Crear clave nueva"
+     - Tipo: JSON → Crear
+     - Se descarga un archivo .json automáticamente
+     - Renombrarlo a:  credenciales_google.json
+     - Copiarlo dentro de esta carpeta (labvima_gsheets)
+
+  F) Compartir el Sheet con la cuenta de servicio:
+     - Abrir el Google Sheet del Paso 2
+     - Clic en "Compartir" (arriba a la derecha)
+     - Pegar el email de la cuenta de servicio
+       (el que copiaste en el paso D)
+     - Rol: "Editor" → Enviar
+
+
+PASO 4 — Configurar el script
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Abrir config.env con el Bloc de notas y completar:
+
+  LABVIMA_USUARIO  →  tu usuario del portal LABVIMA
+  LABVIMA_CLAVE    →  tu contraseña
+  SHEET_URL        →  la URL completa del Google Sheet (Paso 2)
+  SHEET_NOMBRE     →  Registro_Calidad  (dejar así)
+  GOOGLE_CREDENTIALS_JSON  →  credenciales_google.json
+
+
+PASO 5 — Uso semanal
+━━━━━━━━━━━━━━━━━━━━
+  2_EJECUTAR.bat
+     Entra al portal LABVIMA, descarga PDFs nuevos
+     y carga los datos al Sheet automáticamente.
+
+  3_CARGAR_PDF_LOCAL.bat
+     Si ya tenés el PDF, arrastralo encima de este .bat.
+     Carga los datos al Sheet sin necesidad del portal.
+
+
+═══════════════════════════════════════════════════════════════
+ESTRUCTURA DEL SHEET — columnas que se cargan automáticamente
+═══════════════════════════════════════════════════════════════
+
+  A  Fecha
+  B  Nº Informe LABVIMA
+  C  Identificación       (EF, PL, T1, T2, T3, T4, MAS)
+  D  Rodeo                (T1-T4 cuando aplica)
+  E  M.G. (g/100ml)
+  F  Proteína (g/100ml)
+  G  Lactosa (g/100ml)
+  H  SNG (g/100ml)
+  I  ST (g/100ml)
+  J  Pro.V (g/100ml)
+  K  Caseína (g/100ml)
+  L  MUN (mg/dl)
+  M  Crioscopía (mºC)
+  N  RCS (cél/ml x1000)
+  O  RM (ufc/ml x1000)
+  P  Observaciones
+
+
+═══════════════════════════════════════════════════════════════
+SEGURIDAD
+═══════════════════════════════════════════════════════════════
+
+  • credenciales_google.json y config.env son PRIVADOS.
+    No compartir, no subir a ningún lado.
+
+  • El script solo escribe en el Sheet indicado.
+    No accede a ningún otro archivo de tu Google Drive.
+
+  • Los PDFs se guardan localmente en pdfs_labvima/
+
+═══════════════════════════════════════════════════════════════
