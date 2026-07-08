@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BuenaLeche</title>
+  <meta http-equiv="refresh" content="0; url=dist/index.html" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4efe6;
+      --panel: #fffaf2;
+      --ink: #1f2933;
+      --muted: #667085;
+      --accent: #0f766e;
+      --border: rgba(31, 41, 51, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(180, 83, 9, 0.12), transparent 24%),
+        var(--bg);
+    }
+    .card {
+      width: min(720px, calc(100vw - 32px));
+      background: rgba(255, 250, 242, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(31, 41, 51, 0.12);
+      padding: 32px;
+      backdrop-filter: blur(10px);
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(36px, 7vw, 64px);
+      line-height: .95;
+    }
+    p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 58ch;
+    }
+    a {
+      display: inline-block;
+      margin-top: 18px;
+      color: white;
+      text-decoration: none;
+      background: var(--accent);
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="eyebrow">BuenaLeche</div>
+    <h1>Dashboard de calidad láctea</h1>
+    <p>
+      Este sitio se publica desde la rama <strong>main</strong>. Cuando el workflow de GitHub Actions corre,
+      actualiza el dashboard a partir de los PDFs nuevos de LABVIMA y reemplaza esta portada por el panel.
+    </p>
+    <a href="dist/index.html">Abrir dashboard</a>
+    <div class="note">Si el dashboard todavía no se generó, esta portada sigue siendo el punto de entrada del sitio.</div>
+  </main>
+</body>
+</html>
