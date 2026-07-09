@@ -12,7 +12,7 @@ Pipeline para procesar informes LABVIMA subidos a una carpeta de Google Drive, g
 
 ## Ver el dashboard
 
-Una vez activado GitHub Pages en el repositorio con source = `main`, la portada del sitio es `index.html` en la raíz del repo. Esa página redirige al dashboard generado en `dist/index.html` y el workflow la actualiza automáticamente.
+Una vez activado GitHub Pages en el repositorio con source = `GitHub Actions`, el workflow publica el dashboard automáticamente en la URL del sitio.
 
 Si querés probarlo en local, abrí `dist/index.html` después de correr el script de actualización.
 
@@ -23,7 +23,7 @@ Variables y secretos requeridos:
 - `DRIVE_FOLDER_URL`: URL de la carpeta compartida de Google Drive.
 - `GOOGLE_CREDENTIALS_JSON`: contenido JSON de una cuenta de servicio con acceso a la carpeta.
 
-En GitHub Pages dejá source = `main`.
+En GitHub Pages dejá source = `GitHub Actions`.
 
 ## Desarrollo local
 
