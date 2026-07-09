@@ -35,11 +35,14 @@ jobs:
 
       - name: Run update
         env:
-          DRIVE_FOLDER_URL: ${{ secrets.DRIVE_FOLDER_URL }}
+          DRIVE_FOLDER_URL: ${{ vars.DRIVE_FOLDER_URL }}
+          DRIVE_FOLDER_URL_SECRET: ${{ secrets.DRIVE_FOLDER_URL }}
           GOOGLE_CREDENTIALS_JSON: service_account.json
           PYTHONPATH: src
         run: |
-          python scripts/update_from_drive.py --folder-url "$DRIVE_FOLDER_URL" --credentials "$GOOGLE_CREDENTIALS_JSON" --output-dir dist
+          folder_url="${DRIVE_FOLDER_URL:-$DRIVE_FOLDER_URL_SECRET}"
+          folder_url="${folder_url:-https://drive.google.com/drive/folders/1KV2WXkTTao1uoBM5aPNWbkZ-yHur-lcF?usp=sharing}"
+          python scripts/update_from_drive.py --folder-url "$folder_url" --credentials "$GOOGLE_CREDENTIALS_JSON" --output-dir dist
 
       - name: Promote dashboard to Pages root
         run: |
