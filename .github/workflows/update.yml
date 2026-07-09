@@ -40,6 +40,16 @@ jobs:
           GOOGLE_CREDENTIALS_JSON: service_account.json
           PYTHONPATH: src
         run: |
+          if [[ ! -s "$GOOGLE_CREDENTIALS_JSON" ]]; then
+            echo "GOOGLE_CREDENTIALS_JSON no configurado; usando dashboard de fallback versionado"
+            rm -rf dist data
+            mkdir -p dist data
+            cp .tmpdist/index.html dist/index.html
+            cp .tmpdata/dataset.csv data/dataset.csv
+            cp .tmpdata/reports.json data/reports.json
+            exit 0
+          fi
+
           folder_url="${DRIVE_FOLDER_URL:-$DRIVE_FOLDER_URL_SECRET}"
           folder_url="${folder_url:-https://drive.google.com/drive/folders/1KV2WXkTTao1uoBM5aPNWbkZ-yHur-lcF?usp=sharing}"
           python scripts/update_from_drive.py --folder-url "$folder_url" --credentials "$GOOGLE_CREDENTIALS_JSON" --output-dir dist
