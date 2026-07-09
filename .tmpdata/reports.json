@@ -1,6 +1,6 @@
 [
   {
-    "source_file": "/workspaces/BuenaLeche/INFORMES/Muestra leche.pdf",
+    "source_file": "INFORMES/Muestra leche.pdf",
     "source_name": "Muestra leche.pdf",
     "source_id": "sample",
     "nro_informe": 2855264,
@@ -10,7 +10,7 @@
     "propietario": "Divita Marina",
     "especie": "BOVINO",
     "muestras_recibidas": 7,
-    "observaciones": "-",
+    "observaciones": "",
     "rows": [
       {
         "identificacion": "EF",
@@ -18,14 +18,14 @@
         "mg": 4.95,
         "proteina": 3.96,
         "lactosa": 4.62,
-        "sng": 14.9,
-        "st": 497.0,
-        "prov": 179.0,
+        "sng": null,
+        "st": 14.9,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 497.0,
+        "rm": 179.0
       },
       {
         "identificacion": "PL",
@@ -33,14 +33,14 @@
         "mg": 5.03,
         "proteina": 3.95,
         "lactosa": 4.61,
-        "sng": 14.98,
-        "st": 507.0,
-        "prov": 53.0,
+        "sng": null,
+        "st": 14.98,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 507.0,
+        "rm": 53.0
       },
       {
         "identificacion": "T1",
@@ -48,14 +48,14 @@
         "mg": 3.96,
         "proteina": 3.97,
         "lactosa": 4.83,
-        "sng": 14.09,
-        "st": 330.0,
-        "prov": 69.0,
+        "sng": null,
+        "st": 14.09,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 330.0,
+        "rm": 69.0
       },
       {
         "identificacion": "T2",
@@ -63,14 +63,14 @@
         "mg": 5.46,
         "proteina": 3.97,
         "lactosa": 4.63,
-        "sng": 15.43,
-        "st": 307.0,
-        "prov": 64.0,
+        "sng": null,
+        "st": 15.43,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 307.0,
+        "rm": 64.0
       },
       {
         "identificacion": "T3",
@@ -78,14 +78,14 @@
         "mg": 5.34,
         "proteina": 4.31,
         "lactosa": 4.67,
-        "sng": 15.67,
-        "st": 336.0,
-        "prov": 59.0,
+        "sng": null,
+        "st": 15.67,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 336.0,
+        "rm": 59.0
       },
       {
         "identificacion": "T4",
@@ -93,14 +93,14 @@
         "mg": 5.43,
         "proteina": 4.01,
         "lactosa": 4.62,
-        "sng": 15.45,
-        "st": 402.0,
-        "prov": 97.0,
+        "sng": null,
+        "st": 15.45,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 402.0,
+        "rm": 97.0
       },
       {
         "identificacion": "MAS",
@@ -108,14 +108,14 @@
         "mg": 5.54,
         "proteina": 4.04,
         "lactosa": 4.43,
-        "sng": 15.33,
-        "st": 1132.0,
-        "prov": 264.0,
+        "sng": null,
+        "st": 15.33,
+        "prov": null,
         "caseina": null,
         "mun": null,
         "crioscopia": null,
-        "rcs": null,
-        "rm": null
+        "rcs": 1132.0,
+        "rm": 264.0
       }
     ]
   }

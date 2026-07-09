@@ -11,6 +11,33 @@ import pdfplumber
 
 KNOWN_IDS = {"EF", "PL", "MAS", "T1", "T2", "T3", "T4", "T5", "T6"}
 
+COLUMN_FIELDS = [
+    "mg",
+    "proteina",
+    "lactosa",
+    "sng",
+    "st",
+    "prov",
+    "caseina",
+    "mun",
+    "crioscopia",
+    "rcs",
+    "rm",
+]
+
+HEADER_LABELS = {
+    "PROTE": "proteina",
+    "LACTO": "lactosa",
+    "SNG": "sng",
+    "ST": "st",
+    "PRO.V": "prov",
+    "CASE.": "caseina",
+    "MUN": "mun",
+    "CRIOSCOPÍA": "crioscopia",
+    "RCS": "rcs",
+    "RM": "rm",
+}
+
 
 @dataclass(slots=True)
 class SampleRow:
@@ -69,7 +96,7 @@ def parse_pdf(pdf_path: str | Path, *, source_id: str | None = None) -> Report:
     if observaciones == "-":
         observaciones = ""
 
-    rows = _extract_rows(texto)
+    rows = _extract_rows(pdf_path, texto)
 
     return Report(
         source_file=str(pdf_path),
@@ -132,7 +159,100 @@ def _is_identification(value: str) -> bool:
     return bool(value and (value in KNOWN_IDS or re.fullmatch(r"T\d+", value)))
 
 
-def _extract_rows(text: str) -> list[SampleRow]:
+def _extract_rows(pdf_path: Path, text: str) -> list[SampleRow]:
+    rows = _extract_rows_by_layout(pdf_path)
+    if rows:
+        return rows
+    return _extract_rows_from_text(text)
+
+
+def _extract_rows_by_layout(pdf_path: Path) -> list[SampleRow]:
+    rows: list[SampleRow] = []
+
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            line_groups = _group_words_by_line(page.extract_words(use_text_flow=True))
+            anchors, header_top = _extract_column_anchors(line_groups)
+            if not anchors:
+                continue
+
+            for line in line_groups:
+                if line[0]["top"] <= header_top:
+                    continue
+
+                ident = line[0]["text"].upper()
+                if not _is_identification(ident):
+                    continue
+
+                values: dict[str, float | None] = {field: None for field in COLUMN_FIELDS}
+                for word in line[1:]:
+                    token = word["text"]
+                    if not re.fullmatch(r"[\d.,]+", token):
+                        continue
+
+                    value = _to_float(token)
+                    if value is None:
+                        continue
+
+                    center = (word["x0"] + word["x1"]) / 2
+                    field = min(anchors, key=lambda name: abs(anchors[name] - center))
+                    values[field] = value
+
+                rows.append(
+                    SampleRow(
+                        identificacion=ident,
+                        rodeo=ident if ident.startswith("T") else None,
+                        mg=values["mg"],
+                        proteina=values["proteina"],
+                        lactosa=values["lactosa"],
+                        sng=values["sng"],
+                        st=values["st"],
+                        prov=values["prov"],
+                        caseina=values["caseina"],
+                        mun=values["mun"],
+                        crioscopia=values["crioscopia"],
+                        rcs=values["rcs"],
+                        rm=values["rm"],
+                    )
+                )
+
+    return rows
+
+
+def _group_words_by_line(words: list[dict[str, Any]], tolerance: float = 2.0) -> list[list[dict[str, Any]]]:
+    grouped: list[list[dict[str, Any]]] = []
+    for word in sorted(words, key=lambda item: (item["top"], item["x0"])):
+        if not grouped or abs(grouped[-1][0]["top"] - word["top"]) > tolerance:
+            grouped.append([word])
+        else:
+            grouped[-1].append(word)
+    return grouped
+
+
+def _extract_column_anchors(line_groups: list[list[dict[str, Any]]]) -> tuple[dict[str, float], float]:
+    for line in line_groups:
+        labels = [word["text"] for word in line]
+        normalized = {label.upper() for label in labels}
+        if not {"RCS", "RM", "ST"}.issubset(normalized):
+            continue
+
+        anchors: dict[str, float] = {}
+        mg_parts = [word for word in line if word["text"] in {"M", "G"}]
+        if len(mg_parts) >= 2:
+            anchors["mg"] = sum((word["x0"] + word["x1"]) / 2 for word in mg_parts[:2]) / 2
+
+        for word in line:
+            field = HEADER_LABELS.get(word["text"].upper())
+            if field:
+                anchors[field] = (word["x0"] + word["x1"]) / 2
+
+        if set(COLUMN_FIELDS).issubset(anchors):
+            return anchors, line[0]["top"]
+
+    return {}, 0.0
+
+
+def _extract_rows_from_text(text: str) -> list[SampleRow]:
     rows: list[SampleRow] = []
     for raw_line in text.splitlines():
         line = " ".join(raw_line.split())
