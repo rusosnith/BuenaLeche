@@ -33,4 +33,16 @@ Instalá dependencias y ejecutá:
 python scripts/update_from_drive.py --folder-url "<url de la carpeta>" --credentials service_account.json --output-dir dist
 ```
 
+Para integrar incrementalmente los TXT que ya estén en `data/` (sin reprocesar los ya incorporados en `dataset.csv`):
+
+```bash
+python scripts/update_dataset_from_txts.py
+```
+
+Modo prueba (no escribe cambios):
+
+```bash
+python scripts/update_dataset_from_txts.py --dry-run
+```
+
 El parser está en `src/buenaleche/parser.py` y el dashboard en `src/buenaleche/dashboard.py`.
