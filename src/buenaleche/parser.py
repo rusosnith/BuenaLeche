@@ -114,6 +114,52 @@ def parse_pdf(pdf_path: str | Path, *, source_id: str | None = None) -> Report:
     )
 
 
+def parse_txt(txt_path: str | Path, *, source_id: str | None = None) -> Report:
+    txt_path = Path(txt_path)
+    text = txt_path.read_text(encoding="utf-8", errors="replace")
+
+    nro_informe = _extract_int(r"Informe\s*N[°º]?\s*:\s*(\d+)", text)
+    if nro_informe is None:
+        nro_informe = _extract_int(r"Informe\s*N\S*\s*:\s*(\d+)", text)
+    if nro_informe is None:
+        match = re.search(r"(\d{6,})", txt_path.stem)
+        nro_informe = int(match.group(1)) if match else None
+    protocolo = nro_informe
+    fecha_ingreso = _extract_date(r"Fecha de Ingr\.:\s*(\d{1,2}/\d{1,2}/\d{4})", text)
+    fecha_proceso = _extract_date(r"Fecha Proceso\s*:?\s*(\d{1,2}/\d{1,2}/\d{4})", text)
+    propietario = _extract_text_field(r"Propietario\(\*\*\)\s*:\s*(.+?)\s+Fecha de Ingr", text) or ""
+    especie = _extract_text_field(r"Especie\s*\(\*\*\)\s*:\s*([A-ZÁÉÍÓÚÑ ]+)", text)
+    muestras_recibidas = _extract_int(r"Muestras Recibidas\(\*\*\)\s*:\s*(\d+)", text)
+
+    vacios = _extract_vacios(text)
+    rows = _extract_rows_from_txt(text, vacios)
+
+    return Report(
+        source_file=str(txt_path),
+        source_name=txt_path.name,
+        source_id=source_id,
+        nro_informe=nro_informe,
+        protocolo=protocolo,
+        fecha_ingreso=fecha_ingreso,
+        fecha_proceso=fecha_proceso,
+        propietario=propietario.strip(),
+        especie=especie.strip() if especie else None,
+        muestras_recibidas=muestras_recibidas,
+        observaciones="",
+        rows=rows,
+    )
+
+
+def parse_report(report_path: str | Path, *, source_id: str | None = None) -> Report:
+    report_path = Path(report_path)
+    suffix = report_path.suffix.lower()
+    if suffix == ".pdf":
+        return parse_pdf(report_path, source_id=source_id)
+    if suffix == ".txt":
+        return parse_txt(report_path, source_id=source_id)
+    raise ValueError(f"Formato no soportado: {report_path}")
+
+
 def _extract_text(pdf_path: Path) -> str:
     with pdfplumber.open(pdf_path) as pdf:
         return "\n".join(page.extract_text() or "" for page in pdf.pages)
@@ -282,6 +328,83 @@ def _extract_rows_from_text(text: str) -> list[SampleRow]:
                 crioscopia=numeric_values[8],
                 rcs=numeric_values[9],
                 rm=numeric_values[10],
+            )
+        )
+
+    return rows
+
+
+def _extract_vacios(text: str) -> set[str]:
+    match = re.search(r"Vac[íi]os\s*:\s*(.*?)\n\s*\n", text, flags=re.IGNORECASE | re.DOTALL)
+    if not match:
+        return set()
+
+    values = re.findall(r"\d+", match.group(1))
+    return {str(int(value)) for value in values}
+
+
+def _extract_rows_from_txt(text: str, vacios: set[str]) -> list[SampleRow]:
+    rows: list[SampleRow] = []
+    in_table = False
+
+    for raw_line in text.splitlines():
+        line = raw_line.rstrip()
+        compact = " ".join(line.split())
+
+        if not in_table:
+            if compact.upper().startswith("IDENTIF"):
+                in_table = True
+            continue
+
+        if not compact:
+            continue
+        if compact.upper().startswith("LECHE COAGULADA"):
+            break
+
+        match = re.match(r"^(\d{1,4})\s+(.*)$", compact)
+        if not match:
+            continue
+
+        ident = str(int(match.group(1)))
+        remainder = match.group(2)
+        tokens = re.findall(r"\d+(?:[\.,]\d+)?", remainder)
+        numeric_values = [_to_float(token) for token in tokens]
+
+        mg = proteina = lactosa = st = rcs = rm = crioscopia = mun = None
+        if ident in vacios:
+            rcs = 0.0
+        elif len(numeric_values) == 1:
+            rcs = numeric_values[0]
+        elif len(numeric_values) >= 5:
+            mg = numeric_values[0]
+            proteina = numeric_values[1]
+            lactosa = numeric_values[2]
+            st = numeric_values[3]
+            rcs = numeric_values[4]
+            if len(numeric_values) > 5:
+                rm = numeric_values[5]
+            if len(numeric_values) > 6:
+                crioscopia = numeric_values[6]
+            if len(numeric_values) > 7:
+                mun = numeric_values[7]
+        else:
+            continue
+
+        rows.append(
+            SampleRow(
+                identificacion=ident,
+                rodeo=None,
+                mg=mg,
+                proteina=proteina,
+                lactosa=lactosa,
+                sng=None,
+                st=st,
+                prov=None,
+                caseina=None,
+                mun=mun,
+                crioscopia=crioscopia,
+                rcs=rcs,
+                rm=rm,
             )
         )
 

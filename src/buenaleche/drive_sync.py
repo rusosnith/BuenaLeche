@@ -51,7 +51,39 @@ def list_pdfs(service, folder_id: str) -> list[DriveFile]:
     return [DriveFile(id=item["id"], name=item["name"], modified_time=item.get("modifiedTime")) for item in response.get("files", [])]
 
 
+def list_reports(service, folder_id: str) -> list[DriveFile]:
+    # Acepta los formatos reales observados de LABVIMA en Drive.
+    query = (
+        f"'{folder_id}' in parents and "
+        "(mimeType = 'application/pdf' or mimeType = 'text/plain' or name contains '.txt' or name contains '.TXT') and "
+        "trashed = false"
+    )
+    response = service.files().list(
+        q=query,
+        orderBy="modifiedTime desc",
+        fields="files(id,name,modifiedTime)",
+        pageSize=1000,
+        includeItemsFromAllDrives=True,
+        supportsAllDrives=True,
+    ).execute()
+    return [DriveFile(id=item["id"], name=item["name"], modified_time=item.get("modifiedTime")) for item in response.get("files", [])]
+
+
 def download_pdf(service, file_id: str, destination: Path) -> Path:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
+    buffer = io.BytesIO()
+    downloader = MediaIoBaseDownload(buffer, request)
+
+    done = False
+    while not done:
+        _, done = downloader.next_chunk()
+
+    destination.write_bytes(buffer.getvalue())
+    return destination
+
+
+def download_file(service, file_id: str, destination: Path) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
     request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
     buffer = io.BytesIO()

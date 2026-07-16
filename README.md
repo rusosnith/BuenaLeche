@@ -1,12 +1,12 @@
 # BuenaLeche
 
-Pipeline para procesar informes LABVIMA subidos a una carpeta de Google Drive, generar un dataset histórico y publicar un dashboard HTML estático.
+Pipeline para procesar informes LABVIMA (PDF y TXT) subidos a una carpeta de Google Drive, generar un dataset histórico y publicar un dashboard HTML estático.
 
 ## Flujo
 
 1. Un workflow de GitHub Actions se ejecuta manualmente o por schedule.
 2. Lee la carpeta de Drive configurada en `DRIVE_FOLDER_URL`.
-3. Descarga solo los PDFs nuevos o modificados.
+3. Descarga solo los informes nuevos o modificados (PDF/TXT).
 4. Parsea cada informe y recompone `data/dataset.csv` y `data/reports.json`.
 5. Genera `dist/index.html` con métricas y gráficos básicos.
 
