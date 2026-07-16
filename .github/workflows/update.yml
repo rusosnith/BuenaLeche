@@ -29,30 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Restore service account
-        run: |
-          printf '%s' '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > service_account.json
-
-      - name: Run update
+      - name: Run local TXT update
         env:
-          DRIVE_FOLDER_URL: ${{ vars.DRIVE_FOLDER_URL }}
-          DRIVE_FOLDER_URL_SECRET: ${{ secrets.DRIVE_FOLDER_URL }}
-          GOOGLE_CREDENTIALS_JSON: service_account.json
           PYTHONPATH: src
         run: |
-          if [[ ! -s "$GOOGLE_CREDENTIALS_JSON" ]]; then
-            echo "GOOGLE_CREDENTIALS_JSON no configurado; usando dashboard de fallback versionado"
-            rm -rf dist data
-            mkdir -p dist data
-            cp .tmpdist/index.html dist/index.html
-            cp .tmpdata/dataset.csv data/dataset.csv
-            cp .tmpdata/reports.json data/reports.json
-            exit 0
-          fi
-
-          folder_url="${DRIVE_FOLDER_URL:-$DRIVE_FOLDER_URL_SECRET}"
-          folder_url="${folder_url:-https://drive.google.com/drive/folders/1KV2WXkTTao1uoBM5aPNWbkZ-yHur-lcF?usp=sharing}"
-          python scripts/update_from_drive.py --folder-url "$folder_url" --credentials "$GOOGLE_CREDENTIALS_JSON" --output-dir dist
+          python scripts/update_dataset_from_txts.py
+          python scripts/build_dashboard_from_reports.py --reports-json data/reports.json --output dist/index.html
 
       - name: Promote dashboard to Pages root
         run: |
